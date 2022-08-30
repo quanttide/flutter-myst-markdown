@@ -1,7 +1,1 @@
-library flutter_myst_markdown;
-
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export "src/block_syntaxes/executive_code_block_syntax.dart";
