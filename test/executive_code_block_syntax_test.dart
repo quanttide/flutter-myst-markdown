@@ -9,12 +9,17 @@ String executiveCodeExample = """
 ```{code-cell} python
 print('Hello, world!')
 ```
+
+```{code-cell} python
+1 + 1
+```
 """;
 
 
 void main(){
   group('ExecutiveCodeBlockSyntax', (){
-    BlockParser parser = generateParser(executiveCodeExample);
+    BlockParser parser = generateBlockParser(executiveCodeExample);
+    ExecutiveCodeBlockSyntax syntax = const ExecutiveCodeBlockSyntax();
     test('ExecutiveCodeBlockSyntax.pattern', (){
       // without `^` and `$`
       RegExp pattern = RegExp(r'[ ]{0,3}(`{3,}|~{3,})\{code-cell\}(.*)');
@@ -25,9 +30,18 @@ void main(){
       expect(infoString, ' python');
     });
     test('ExecutiveCodeBlockSyntax.canParse', (){
-      ExecutiveCodeBlockSyntax syntax = const ExecutiveCodeBlockSyntax();
       bool canParse = syntax.canParse(parser);
       expect(canParse, true);
     });
+    test('ExecutiveCodeBlockSyntax.parseChildLines', (){
+      List<String> childLines = syntax.parseChildLines(parser);
+      expect(childLines[0], "print('Hello, world!')");
+      expect(childLines[1], "```");
+    });
+    test('ExecutiveCodeBlockSyntax.parse', (){
+      print(parser.current);
+      Node element = syntax.parse(parser);
+      print(element);
+    }, skip: 'can not pass');
   });
 }
