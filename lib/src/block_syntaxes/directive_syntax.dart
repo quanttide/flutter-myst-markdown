@@ -6,7 +6,6 @@
 /// See https://github.com/dart-lang/markdown/blob/master/LICENSE for original license.
 
 import 'package:markdown/markdown.dart';
-import 'package:charcode/charcode.dart';
 import 'package:markdown/src/util.dart';
 
 
@@ -14,8 +13,12 @@ import 'package:markdown/src/util.dart';
 /// https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html#directives-a-block-level-extension-point
 abstract class DirectiveSyntax extends BlockSyntax {
   /// Use patterns of fenced code
+  // the arguments should be trimmed
+  // http://spec.commonmark.org/0.22/#example-100
   @override
-  RegExp get pattern => RegExp(r'^[ ]{0,3}(`{3,}|~{3,})(.*)$');
+  RegExp get pattern => RegExp(r'^[ ]{0,3}(`{3,}|~{3,})\{(.*)\}[ ]+(.*?)[ ]*$');
+
+  RegExp get endBlockPattern => RegExp(r'[ ]{0,3}(`{3,}|~{3,})[ ]*$');
 
   /// Override by its subclasses to define the directive name
   String get directiveName;
@@ -25,15 +28,11 @@ abstract class DirectiveSyntax extends BlockSyntax {
   @override
   bool canParse(BlockParser parser) {
     final match = pattern.firstMatch(parser.current);
+    // not match
     if (match == null) return false;
-    final codeFence = match.group(1)!;
-    final infoString = match.group(2);
-    // From the CommonMark spec:
-    //
-    // > If the info string comes after a backtick fence, it may not contain
-    // > any backtick characters.
-    return (codeFence.codeUnitAt(0) != $backquote ||
-        !infoString!.codeUnits.contains($backquote));
+    // match
+    // check the directive name
+    return (match.group(2) == directiveName);
   }
 
   /// parse the lines in the block
@@ -48,7 +47,7 @@ abstract class DirectiveSyntax extends BlockSyntax {
 
     while (!parser.isDone) {
       // match the end line
-      final match = pattern.firstMatch(parser.current);
+      final match = endBlockPattern.firstMatch(parser.current);
       if (match == null || !match[1]!.startsWith(endBlock)) {
         // not match
         childLines.add(parser.current);
@@ -61,45 +60,39 @@ abstract class DirectiveSyntax extends BlockSyntax {
     return childLines;
   }
 
+  /// parse arguments
+  Map<String, dynamic> parseArguments(String? arguments, bool encodeHtml);
+
   /// parse
   @override
-  Element parse(BlockParser parser) {
+  Node parse(BlockParser parser) {
     // Get the syntax identifier, if there is one.
     final match = pattern.firstMatch(parser.current)!;
-    // suppose begin block and end block has the same pattern.
-    final endBlock = match.group(1);
-    var infoString = match.group(2)!;
+
+    // code fence
+    final String codeFence = match.group(1)!;
+    // directive name
+    final String directiveName = match.group(2)!;
+    // arguments
+    final String? arguments = match.group(3);
 
     // parse the child lines
-    final childLines = parseChildLines(parser, endBlock);
+    // begin and end code fence are same.
+    List<String> childLines = parseChildLines(parser, codeFence);
 
     // The Markdown tests expect a trailing newline.
     childLines.add('');
 
-    var text = childLines.join('\n');
+    // merge as `textContent` property
+    String text = childLines.join('\n');
     if (parser.document.encodeHtml) {
       text = escapeHtml(text);
     }
-    final code = Element.text('code', text);
 
-    // the info-string should be trimmed
-    // http://spec.commonmark.org/0.22/#example-100
-    infoString = infoString.trim();
-    if (infoString.isNotEmpty) {
-      // only use the first word in the syntax
-      // http://spec.commonmark.org/0.22/#example-100
-      final firstSpace = infoString.indexOf(' ');
-      if (firstSpace >= 0) {
-        infoString = infoString.substring(0, firstSpace);
-      }
-      if (parser.document.encodeHtml) {
-        infoString = escapeHtmlAttribute(infoString);
-      }
-      code.attributes['class'] = 'language-$infoString';
-    }
-
-    final element = Element('pre', [code]);
-
+    // directive Element
+    Element directive = Element.text(directiveName, text);
+    // pre Element
+    final element = Element('pre', [directive]);
     return element;
   }
 }
