@@ -1,23 +1,26 @@
-/// Syntax for Executive Code Block
-/// Following https://jupyterbook.org/en/stable/reference/cheatsheet.html#executable-code
+/// Directive Syntax for MyST Markdown
+/// https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html#directives-a-block-level-extension-point
 ///
 /// Originally based on `package:markdown/src/block_syntaxes/fenced_code_block_syntax.dart` (BSD)
 /// https://github.com/dart-lang/markdown/blob/master/lib/src/block_syntaxes/fenced_code_block_syntax.dart
 /// See https://github.com/dart-lang/markdown/blob/master/LICENSE for original license.
 
-
 import 'package:markdown/markdown.dart';
-import 'package:markdown/src/charcode.dart';
+import 'package:charcode/charcode.dart';
 import 'package:markdown/src/util.dart';
 
 
-/// Syntax for Executive Code Block
-/// Following https://jupyterbook.org/en/stable/reference/cheatsheet.html#executable-code
-class ExecutiveCodeBlockSyntax extends BlockSyntax {
+/// Directive syntax, a block-level extension point
+/// https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html#directives-a-block-level-extension-point
+abstract class DirectiveSyntax extends BlockSyntax {
+  /// Use patterns of fenced code
   @override
-  RegExp get pattern => RegExp(r'^[ ]{0,3}(`{3,}|~{3,})\{code-cell\}(.*)$');
+  RegExp get pattern => RegExp(r'^[ ]{0,3}(`{3,}|~{3,})(.*)$');
 
-  const ExecutiveCodeBlockSyntax();
+  /// Override by its subclasses to define the directive name
+  String get directiveName;
+
+  const DirectiveSyntax();
 
   @override
   bool canParse(BlockParser parser) {
@@ -33,16 +36,21 @@ class ExecutiveCodeBlockSyntax extends BlockSyntax {
         !infoString!.codeUnits.contains($backquote));
   }
 
+  /// parse the lines in the block
   @override
   List<String> parseChildLines(BlockParser parser, [String? endBlock]) {
+    // `??=` means if it is `null`, it will be filled as the value.
     endBlock ??= '';
-
     final childLines = <String>[];
+
+    // parse from the next line of the pattern
     parser.advance();
 
     while (!parser.isDone) {
+      // match the end line
       final match = pattern.firstMatch(parser.current);
       if (match == null || !match[1]!.startsWith(endBlock)) {
+        // not match
         childLines.add(parser.current);
         parser.advance();
       } else {
@@ -53,13 +61,16 @@ class ExecutiveCodeBlockSyntax extends BlockSyntax {
     return childLines;
   }
 
+  /// parse
   @override
-  Node parse(BlockParser parser) {
+  Element parse(BlockParser parser) {
     // Get the syntax identifier, if there is one.
     final match = pattern.firstMatch(parser.current)!;
+    // suppose begin block and end block has the same pattern.
     final endBlock = match.group(1);
     var infoString = match.group(2)!;
 
+    // parse the child lines
     final childLines = parseChildLines(parser, endBlock);
 
     // The Markdown tests expect a trailing newline.
