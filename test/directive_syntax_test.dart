@@ -10,7 +10,7 @@ class CustomDirectiveSyntax extends DirectiveSyntax {
   String get directiveName => 'directive-name';
 
   @override
-  Map<String, dynamic> parseArguments(String? arguments, bool encodeHtml) {
+  Map<String, String> parseArguments(String? arguments, bool encodeHtml) {
     return {};
   }
 }

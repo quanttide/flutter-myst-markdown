@@ -10,7 +10,7 @@ import 'package:markdown/src/util.dart';
 
 
 /// Directive syntax, a block-level extension point
-/// https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html#directives-a-block-level-extension-point
+/// https://myst-parsdthedocs.io/en/latest/syntax/roles-and-directives.html#directives-a-block-level-extension-point
 abstract class DirectiveSyntax extends BlockSyntax {
   /// Use patterns of fenced code
   // the arguments should be trimmed
@@ -61,7 +61,7 @@ abstract class DirectiveSyntax extends BlockSyntax {
   }
 
   /// parse arguments
-  Map<String, dynamic> parseArguments(String? arguments, bool encodeHtml);
+  Map<String, String> parseArguments(String? arguments, bool encodeHtml);
 
   /// parse
   @override
@@ -91,6 +91,11 @@ abstract class DirectiveSyntax extends BlockSyntax {
 
     // directive Element
     Element directive = Element.text(directiveName, text);
+    // parse arguments
+    Map<String, String> attributes = parseArguments(arguments, parser.document.encodeHtml);
+    // directive.attributes = attributes;
+    attributes.forEach((key, value) => directive.attributes[key]=value);
+
     // pre Element
     final element = Element('pre', [directive]);
     return element;
