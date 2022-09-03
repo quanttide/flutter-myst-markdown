@@ -28,7 +28,7 @@ void main(){
     });
     test('ExecutiveCodeSyntax.parseArguments', (){
       const String arguments = 'python';
-      Map<String, String> attributes = syntax.parseArguments(arguments, false);
+      Map<String, String> attributes = syntax.parseArguments(arguments);
       expect(attributes['class'], 'kernel-python');
     });
     test('ExecutiveCodeSyntax.parse', (){

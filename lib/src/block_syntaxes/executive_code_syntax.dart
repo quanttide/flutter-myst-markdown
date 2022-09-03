@@ -15,7 +15,7 @@ class ExecutiveCodeSyntax extends DirectiveSyntax {
   const ExecutiveCodeSyntax();
 
   @override
-  Map<String, String> parseArguments(String? arguments, bool encodeHtml){
+  Map<String, String> parseArguments(String? arguments, {bool encodeHtml = false}){
     Map<String, String> attributes = {};
     if (arguments!=null) {
       // only use the first word in the syntax

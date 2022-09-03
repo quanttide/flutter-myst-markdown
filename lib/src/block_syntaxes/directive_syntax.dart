@@ -61,7 +61,11 @@ abstract class DirectiveSyntax extends BlockSyntax {
   }
 
   /// parse arguments
-  Map<String, String> parseArguments(String? arguments, bool encodeHtml);
+  /// default returns {}.
+  /// if you need to customize it, please override it in the subclasses.
+  Map<String, String> parseArguments(String? arguments, {bool encodeHtml = false}){
+    return {};
+  }
 
   /// parse
   @override
@@ -92,7 +96,10 @@ abstract class DirectiveSyntax extends BlockSyntax {
     // directive Element
     Element directive = Element.text(directiveName, text);
     // parse arguments
-    Map<String, String> attributes = parseArguments(arguments, parser.document.encodeHtml);
+    Map<String, String> attributes = parseArguments(
+        arguments,
+        encodeHtml: parser.document.encodeHtml
+    );
     // directive.attributes = attributes;
     attributes.forEach((key, value) => directive.attributes[key]=value);
 

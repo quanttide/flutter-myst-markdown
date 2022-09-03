@@ -8,11 +8,6 @@ import 'utils.dart';
 class CustomDirectiveSyntax extends DirectiveSyntax {
   @override
   String get directiveName => 'directive-name';
-
-  @override
-  Map<String, String> parseArguments(String? arguments, bool encodeHtml) {
-    return {};
-  }
 }
 
 
