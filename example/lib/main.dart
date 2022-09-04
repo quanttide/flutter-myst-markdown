@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
+import 'screens/executive_code.dart';
 
 
 void main() {
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (BuildContext context) => const HomeScreen()
+        '/': (BuildContext context) => const HomeScreen(),
+        '/code': (BuildContext context) => const ExecutiveCodeScreen(),
       },
     );
   }

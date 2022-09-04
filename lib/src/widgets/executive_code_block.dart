@@ -32,7 +32,6 @@ class ExecutiveCodeControlPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Text('');
   }
-
 }
 
 
@@ -52,9 +51,30 @@ class ExecutiveCodeInput extends StatefulWidget {
 }
 
 class ExecutiveCodeInputState extends State<ExecutiveCodeInput> {
+  late TextEditingController textEditingController;
+
+  @override
+  void initState() {
+    super.initState();
+    textEditingController = TextEditingController(text: widget.defaultInput);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Text('');
+    return EditableText(
+      controller: textEditingController,
+      focusNode: FocusNode(),
+      style: const TextStyle(),
+      cursorColor: Colors.green,
+      backgroundCursorColor: Colors.blue,
+      maxLines: null,  // default is 1
+    );
+  }
+
+  @override
+  void dispose(){
+    textEditingController.dispose();
+    super.dispose();
   }
 }
 

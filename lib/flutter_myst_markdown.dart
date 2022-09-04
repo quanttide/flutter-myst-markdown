@@ -6,5 +6,7 @@ export "src/block_syntaxes/executive_code_syntax.dart";
 export "src/extension_set.dart";
 
 // Flutter
+// Widget classes
+export "src/widgets/executive_code_block.dart";
 // MarkdownElementBuilder classes
 export "src/builders/executive_code_builder.dart";
