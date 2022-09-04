@@ -11,6 +11,7 @@ final md.ExtensionSet mystMarkdown = md.ExtensionSet(
   ),
   List<md.InlineSyntax>.unmodifiable(
     <md.InlineSyntax>[
+      md.InlineHtmlSyntax()
     ],
   ),
 );
