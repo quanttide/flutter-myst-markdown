@@ -16,39 +16,52 @@ import "package:provider/provider.dart";
 ///   - https://github.com/flutter/plugins/blob/main/packages/video_player/video_player/lib/video_player.dart
 class CodeExecutingController extends ValueNotifier<String> {
   final Function codeExecutingHandler;
+  final String defaultInput;
   final String defaultOutput;
+  late TextEditingController textEditingController;
 
   CodeExecutingController({
     required this.codeExecutingHandler,
-    this.defaultOutput = ''
-  }) : super(defaultOutput);
+    this.defaultInput = '',
+    this.defaultOutput = '',
+  }) : super(defaultOutput){
+    textEditingController = TextEditingController(text: defaultInput);
+  }
 
-  Future<void> execute(String input) async {
-    value = await codeExecutingHandler(input);
+  Future<void> execute() async {
+    value = await codeExecutingHandler(textEditingController.text);
     notifyListeners();
   }
 }
 
 
 /// Widget for executive code block
+///
+/// ```dart
+/// ExecutiveCodeBlock(
+///   controller: CodeExecutingController(
+///     codeExecutingHandler: mockCodeExecutingHandler,
+///     defaultInput: "defaultInput",
+///     defaultOutput: "defaultOutput",
+///   )
+/// )
+/// ```
 class ExecutiveCodeBlock extends StatelessWidget {
-  final CodeExecutingController codeExecutingController;
-  final String? defaultInput;
+  final CodeExecutingController controller;
 
   const ExecutiveCodeBlock({
     super.key,
-    required this.codeExecutingController,
-    this.defaultInput
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => codeExecutingController,
+      create: (context) => controller,
       child: Column(
           children: [
             const ExecutiveCodeControlPanel(),
-            ExecutiveCodeInput(defaultInput: defaultInput),
+            ExecutiveCodeInput(controller: controller),
             const ExecutiveCodeOutput(),
           ]
       )
@@ -64,7 +77,36 @@ class ExecutiveCodeControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('');
+    return Row(
+      children: const [
+        ExecutiveCodeOutlinedRunButton()
+      ],
+    );
+  }
+}
+
+/// Basic class for run button
+class ExecutiveCodeRawMaterialRunButton extends StatelessWidget {
+  const ExecutiveCodeRawMaterialRunButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(onPressed: () => context.read<CodeExecutingController>().execute());
+  }
+}
+
+/// Run button for executive code block.
+/// Placed in the control panel.
+class ExecutiveCodeOutlinedRunButton extends ExecutiveCodeRawMaterialRunButton {
+  const ExecutiveCodeOutlinedRunButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+        onPressed: () => context.read<CodeExecutingController>().execute(),
+        icon: const Icon(Icons.play_arrow_outlined),
+        label: const Text('Run'),
+    );
   }
 }
 
@@ -72,22 +114,27 @@ class ExecutiveCodeControlPanel extends StatelessWidget {
 /// Show the input of executive code block,
 /// allow user to input its code.
 class ExecutiveCodeInput extends StatelessWidget {
-  final String? defaultInput;
+  final CodeExecutingController controller;
 
   const ExecutiveCodeInput({
     super.key,
-    this.defaultInput
+    required this.controller
   });
 
   @override
   Widget build(BuildContext context) {
     return EditableText(
-      controller: TextEditingController(text: defaultInput),
+      controller: controller.textEditingController,
       focusNode: FocusNode(),
       style: const TextStyle(),
       cursorColor: Colors.green,
       backgroundCursorColor: Colors.blue,
-      maxLines: null,  // default is 1
+      // Note: default is 1
+      maxLines: null,
+      onChanged: (String newText){
+        // Note: developer must define the edit behavior
+        controller.textEditingController.text = newText;
+      }
     );
   }
 }
@@ -101,7 +148,7 @@ class ExecutiveCodeOutput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CodeExecutingController>(
       builder: (context, controller, child){
-        return const Text('');
+        return Text(controller.value);
       }
     );
   }

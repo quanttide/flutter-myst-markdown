@@ -11,19 +11,23 @@ void main(){
     test('CodeExecutingController.init', (){
       final controller = CodeExecutingController(
         codeExecutingHandler: mockCodeExecutingHandler,
+        defaultInput: "defaultInput",
         defaultOutput: "defaultOutput"
       );
       expect(controller.value, "defaultOutput");
     });
     test('CodeExecutingController.execute', (){
       final controller = CodeExecutingController(
-          codeExecutingHandler: mockCodeExecutingHandler
+          codeExecutingHandler: mockCodeExecutingHandler,
+          defaultInput: "defaultInput",
+          defaultOutput: "defaultOutput"
       );
       String input = "print('Hello, world')";
       controller.addListener(() {
         expect(controller.value, input);
       });
-      controller.execute(input);
+      controller.textEditingController.text = input;
+      controller.execute();
     });
   });
   group('ExecutiveCodeOutput', () {
