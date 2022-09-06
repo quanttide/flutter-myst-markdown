@@ -7,12 +7,14 @@ class ExecutiveCodeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    return ExecutiveCodeBlock(
-      controller: CodeExecutingController(
-        codeExecutingHandler: mockCodeExecutingHandler,
-        defaultInput: 'print("hello world")',
-        defaultOutput: 'hello, world',
-      ),
+    return Scaffold(
+      body: ExecutiveCodeBlock(
+        controller: CodeExecutingController(
+          codeExecutingHandler: mockCodeExecutingHandler,
+          defaultInput: 'print("hello world")',
+          defaultOutput: 'hello, world',
+        ),
+      )
     );
   }
 }

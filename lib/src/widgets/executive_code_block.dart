@@ -113,7 +113,7 @@ class ExecutiveCodeOutlinedRunButton extends ExecutiveCodeRawMaterialRunButton {
 
 /// Show the input of executive code block,
 /// allow user to input its code.
-class ExecutiveCodeInput extends StatelessWidget {
+class ExecutiveCodeInput extends StatefulWidget {
   final CodeExecutingController controller;
 
   const ExecutiveCodeInput({
@@ -122,20 +122,32 @@ class ExecutiveCodeInput extends StatelessWidget {
   });
 
   @override
+  State<StatefulWidget> createState() => ExecutiveCodeInputState();
+}
+
+class ExecutiveCodeInputState extends State<ExecutiveCodeInput> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return EditableText(
-      controller: controller.textEditingController,
-      focusNode: FocusNode(),
-      style: const TextStyle(),
-      cursorColor: Colors.green,
-      backgroundCursorColor: Colors.blue,
-      // Note: default is 1
+    return TextField(
+      controller: widget.controller.textEditingController,
+      decoration: const InputDecoration(
+        border: InputBorder.none,
+      ),
       maxLines: null,
-      onChanged: (String newText){
-        // Note: developer must define the edit behavior
-        controller.textEditingController.text = newText;
-      }
+      onSubmitted: (String value) => widget.controller.textEditingController.text = value,
     );
+  }
+
+  @override
+  void dispose() {
+    widget.controller.textEditingController.dispose();
+    widget.controller.dispose();
+    super.dispose();
   }
 }
 
