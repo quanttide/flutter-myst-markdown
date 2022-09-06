@@ -24,7 +24,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Markdown(
+    return Scaffold(
+      body: Markdown(
         key: const Key("notebook-example"),
         data: markdownText,
         selectable: true,
@@ -36,6 +37,7 @@ class HomeScreen extends StatelessWidget {
           ),
         },
         extensionSet: mystMarkdown
+      )
     );
   }
 }

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
+import 'package:flutter_highlight/flutter_highlight.dart';
 
 
 /// Controller for executive code block
@@ -160,7 +161,12 @@ class ExecutiveCodeOutput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CodeExecutingController>(
       builder: (context, controller, child){
-        return Text(controller.value);
+        return HighlightView(
+          // highlight code
+          controller.value,
+          // TODO: use arguments
+          language: 'python',
+        );
       }
     );
   }

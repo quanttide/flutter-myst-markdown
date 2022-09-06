@@ -6,7 +6,8 @@
 import "package:flutter/material.dart";
 import "package:markdown/markdown.dart" as md;
 import "package:flutter_markdown/flutter_markdown.dart";
-import 'package:flutter_highlight/flutter_highlight.dart';
+
+import "../widgets/executive_code_block.dart";
 
 
 /// MarkdownElementBuilder for Executive Code
@@ -30,77 +31,11 @@ class ExecutiveCodeBuilder extends MarkdownElementBuilder {
 
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
-    // input
-    String input = element.textContent;
-    // run code and render result
-    return build(input);
-  }
-
-  /// build layout
-  Widget build(String input){
-    return Column(
-        children: [
-          buildInput(input),
-          buildOutput(input),
-        ]
+    return ExecutiveCodeBlock(
+      controller: CodeExecutingController(
+        codeExecutingHandler: codeExecutingHandler,
+        defaultInput: element.textContent,
+      ),
     );
-  }
-
-  /// build input widget
-  Widget buildInput(String input){
-    return HighlightView(
-      // 代码高亮
-      input,
-      language: 'python',  // TODO: use arguments set by user
-    );
-  }
-
-  /// build output widget
-  Widget buildOutput(String input) {
-    return FutureBuilder(
-      future: codeExecutingHandler(input),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
-        switch (snapshot.connectionState){
-          case ConnectionState.none:
-          // 初始
-            return buildOutputNone(context);
-          case ConnectionState.waiting:
-          // 加载
-            return buildOutputWaiting(context);
-          default:
-          // 异常
-            if (snapshot.hasError){
-              return buildOutputWithError(context, snapshot.error);
-            }
-            // 正常
-            return buildOutputWithData(context, snapshot.data);
-        }
-      },
-    );
-  }
-
-  /// build output withData
-  Widget buildOutputWithData(BuildContext context,String output){
-    return HighlightView(
-      // highlight code
-      output,
-      language: 'python',  // TODO: use arguments set by user
-    );
-  }
-
-  /// build output none
-  Widget buildOutputNone(BuildContext context){
-    return const Text('');
-
-  }
-
-  /// build output waiting
-  Widget buildOutputWaiting(BuildContext context){
-    return const LinearProgressIndicator();
-  }
-
-  /// build error
-  Widget buildOutputWithError(BuildContext context, dynamic error){
-    return Center(child: ErrorWidget(error));
   }
 }
