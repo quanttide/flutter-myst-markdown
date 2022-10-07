@@ -8,6 +8,7 @@ import "package:markdown/markdown.dart" as md;
 import "package:flutter_markdown/flutter_markdown.dart";
 
 import "../widgets/executive_code_block.dart";
+import "../types.dart";
 
 
 /// MarkdownElementBuilder for Executive Code
@@ -23,7 +24,7 @@ import "../widgets/executive_code_block.dart";
 /// where `Markdown` can be replaced by `MarkdownBody` or `MarkdownBuilder`.
 ///
 class ExecutiveCodeBuilder extends MarkdownElementBuilder {
-  final Function codeExecutingHandler;
+  final CodeExecutingHandler codeExecutingHandler;
 
   ExecutiveCodeBuilder({
     required this.codeExecutingHandler

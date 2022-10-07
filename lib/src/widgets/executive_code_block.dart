@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import 'package:flutter_highlight/flutter_highlight.dart';
 
+import '../types.dart';
+
 
 /// Controller for executive code block
 ///
@@ -16,7 +18,7 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 ///   - https://api.flutter.dev/flutter/foundation/ValueNotifier-class.html
 ///   - https://github.com/flutter/plugins/blob/main/packages/video_player/video_player/lib/video_player.dart
 class CodeExecutingController extends ValueNotifier<String> {
-  final Function codeExecutingHandler;
+  final CodeExecutingHandler codeExecutingHandler;
   final String defaultInput;
   final String defaultOutput;
   late TextEditingController textEditingController;
@@ -161,11 +163,12 @@ class ExecutiveCodeOutput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CodeExecutingController>(
       builder: (context, controller, child){
-        return HighlightView(
+        return RichText(
           // highlight code
-          controller.value,
+          text: TextSpan(
+            text: controller.value
+          ),
           // TODO: use arguments
-          language: 'python',
         );
       }
     );

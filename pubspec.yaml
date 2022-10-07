@@ -1,8 +1,9 @@
 name: flutter_myst_markdown
 description: MyST Markdown for Flutter
-version: 0.1.0-beta.3
+version: 0.1.0-beta.4
 repository: https://github.com/quanttide/flutter-myst-markdwon
 homepage: https://github.com/quanttide/flutter-myst-markdwon
+license: BSD-3 License
 
 environment:
   sdk: ">=2.17.0 <3.0.0"

@@ -1,5 +1,6 @@
 /// mock模块
 
-Future<dynamic> mockCodeExecutingHandler(input) async {
+Future<String> mockCodeExecutingHandler(String input) async {
   return input;
 }
+
