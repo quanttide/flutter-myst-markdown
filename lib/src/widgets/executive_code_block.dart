@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
-import 'package:flutter_highlight/flutter_highlight.dart';
 
 import '../types.dart';
 
@@ -62,6 +61,7 @@ class ExecutiveCodeBlock extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => controller,
       child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ExecutiveCodeControlPanel(),
             ExecutiveCodeInput(controller: controller),
@@ -163,12 +163,12 @@ class ExecutiveCodeOutput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CodeExecutingController>(
       builder: (context, controller, child){
-        return RichText(
-          // highlight code
-          text: TextSpan(
-            text: controller.value
-          ),
-          // TODO: use arguments
+        debugPrint("${controller.value.split(r'\n')}");
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: controller.value.split(r'\n').map(
+              (item) => Text(item)
+          ).toList(),
         );
       }
     );

@@ -3,6 +3,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:flutter_myst_markdown/flutter_myst_markdown.dart';
 
+import '../mock.dart';
+
 
 const markdownText = """
 This is a fenced code block:
@@ -15,6 +17,12 @@ This is an executive code block:
 
 ```{code-cell} python
 1 + 2
+```
+
+This is an error block:
+
+```{code-cell} python
+print（"test")
 ```
 """;
 
@@ -31,9 +39,7 @@ class HomeScreen extends StatelessWidget {
         selectable: true,
         builders: {
           'code-cell': ExecutiveCodeBuilder(
-              codeExecutingHandler: (input) async {
-                return input;
-              }
+              codeExecutingHandler: codeExecutingHandler
           ),
         },
         extensionSet: mystMarkdown
